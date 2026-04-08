@@ -366,7 +366,7 @@
           <span class="vo-desc">Soft, calm</span>
         </button>
       </div>
-      <div class="voice-label" id="voiceLabel">en-IN-Journey-F &middot; Indian English &middot; Google Journey</div>
+      <div class="voice-label" id="voiceLabel">en-IN-Wavenet-A &middot; Indian English &middot; Warm & Energetic</div>
     </div>
   </div>
 
@@ -438,8 +438,8 @@ let currentPlayingAudio = null;
 
 let selectedVoice = 'female';
 const VOICES = {
-  female: { name: 'en-IN-Journey-F', lang: 'en-IN', gender: 'FEMALE', label: 'en-IN-Journey-F \u00b7 Indian English \u00b7 Google Journey' },
-  male:   { name: 'en-IN-Journey-D', lang: 'en-IN', gender: 'MALE',   label: 'en-IN-Journey-D \u00b7 Indian English \u00b7 Google Journey' },
+  female: { name: 'en-IN-Wavenet-A', lang: 'en-IN', gender: 'FEMALE', label: 'en-IN-Wavenet-A \u00b7 Indian English \u00b7 Warm & Energetic' },
+  male:   { name: 'en-IN-Wavenet-C', lang: 'en-IN', gender: 'MALE',   label: 'en-IN-Wavenet-C \u00b7 Indian English \u00b7 Warm & Energetic' },
 };
 
 function selectVoice(v) {
@@ -609,6 +609,39 @@ async function stitchWithChimes(speechBlob) {
   return samplesToWav(combined, sr);
 }
 
+// --- SSML Builder (adds energy, emphasis, natural pauses) ---
+function textToSSML(text) {
+  let s = text;
+
+  // Add natural pauses after sentence-ending punctuation
+  s = s.replace(/\.\s+/g, '.<break time="300ms"/> ');
+  s = s.replace(/!\s+/g, '!<break time="250ms"/> ');
+  s = s.replace(/\?\s+/g, '?<break time="300ms"/> ');
+
+  // Breathing pauses after commas
+  s = s.replace(/,\s+/g, ',<break time="150ms"/> ');
+
+  // Pauses after colons/semicolons
+  s = s.replace(/:\s+/g, ':<break time="200ms"/> ');
+  s = s.replace(/;\s+/g, ';<break time="180ms"/> ');
+
+  // Emphasize attention-grabbing words
+  const emphasisWords = [
+    'attention', 'important', 'please', 'kindly', 'reminder',
+    'urgent', 'notice', 'welcome', 'thank you', 'thanks',
+    'immediately', 'now', 'today', 'minutes', 'session',
+    'class', 'studio', 'members', 'everyone', 'exciting',
+    'special', 'congratulations', 'begins', 'starting'
+  ];
+  emphasisWords.forEach(word => {
+    const regex = new RegExp('\\b(' + word + ')\\b', 'gi');
+    s = s.replace(regex, '<emphasis level="moderate">$1</emphasis>');
+  });
+
+  // Wrap with slightly upbeat prosody for energy
+  return `<speak><prosody rate="108%" pitch="+2st">${s}</prosody></speak>`;
+}
+
 // --- Generate ---
 async function generateAll() {
   if (!apiKey) { alert('Please save your Google Cloud TTS API key first.'); return; }
@@ -627,9 +660,9 @@ async function generateAll() {
       const resp = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          input: { text: row.text },
+          input: { ssml: textToSSML(row.text) },
           voice: { languageCode: VOICES[selectedVoice].lang, name: VOICES[selectedVoice].name, ssmlGender: VOICES[selectedVoice].gender },
-          audioConfig: { audioEncoding: 'MP3', speakingRate: 0.95, volumeGainDb: 2.0, effectsProfileId: ['large-home-entertainment-class-device'] },
+          audioConfig: { audioEncoding: 'MP3', speakingRate: 1.0, pitch: 1.5, volumeGainDb: 3.0, effectsProfileId: ['large-home-entertainment-class-device'] },
         }),
       });
       if (!resp.ok) {
