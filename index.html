@@ -8,6 +8,8 @@
         integrity="sha384-vtjasyidUo0kW94K5MXDXntzOJpQgBKXmE7e2Ga4LG0skTTLeBi97eFAXsqewJjw"
         crossorigin="anonymous"></script>
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -320,6 +322,59 @@
     border-top: 1px solid var(--border); margin-top: 8px;
   }
 
+  /* ---- Auth / Login ---- */
+  .auth-screen {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 24px;
+    text-align: center;
+  }
+  .auth-logo {
+    width: 72px; height: 72px; border-radius: 20px;
+    background: linear-gradient(135deg, var(--cult-red), #ff5252);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 32px; color: #fff;
+    box-shadow: 0 8px 32px rgba(229,57,53,0.25);
+    margin-bottom: 24px;
+  }
+  .auth-title { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
+  .auth-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
+  .btn-google {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 32px; border-radius: 12px;
+    background: var(--surface); border: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+    font-size: 15px; font-weight: 600; color: var(--text);
+    cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: all 0.25s;
+  }
+  .btn-google:hover { box-shadow: var(--shadow-lg); transform: translateY(-1px); border-color: var(--border-hover); }
+  .btn-google img { width: 20px; height: 20px; }
+  .auth-error {
+    margin-top: 16px; font-size: 13px; color: #c62828;
+    background: #ffebee; padding: 10px 18px; border-radius: 10px;
+    display: none; max-width: 400px;
+  }
+  .auth-error.visible { display: block; }
+  .auth-note { margin-top: 20px; font-size: 12px; color: var(--text-muted); }
+
+  /* User bar in header */
+  .user-bar {
+    margin-left: auto; display: flex; align-items: center; gap: 10px;
+  }
+  .user-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 2px solid var(--border);
+  }
+  .user-name { font-size: 12px; font-weight: 500; color: var(--text-muted); }
+  .btn-logout {
+    font-size: 11px; color: var(--text-muted); background: var(--surface2);
+    border: 1px solid var(--border); padding: 5px 12px; border-radius: 8px;
+    cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s;
+  }
+  .btn-logout:hover { color: var(--cult-red); border-color: var(--cult-red); }
+
+  .app-hidden { display: none !important; }
+
   @media (max-width: 520px) {
     .container { padding: 20px 14px 60px; }
     .header { padding: 14px 16px; }
@@ -330,11 +385,31 @@
 </head>
 <body>
 
+<!-- Login Screen -->
+<div class="auth-screen" id="authScreen">
+  <div class="auth-logo">C</div>
+  <div class="auth-title">Cult Center</div>
+  <div class="auth-subtitle">Announcement Generator — Sign in to continue</div>
+  <button class="btn-google" id="btnGoogleLogin" onclick="signInWithGoogle()">
+    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+    Sign in with Google
+  </button>
+  <div class="auth-error" id="authError"></div>
+  <div class="auth-note">Access restricted to @curefit.com accounts</div>
+</div>
+
+<!-- App (hidden until authenticated) -->
+<div id="appWrapper" class="app-hidden">
 <div class="header">
   <div class="logo">C</div>
   <div class="header-text">
     <h1>Cult Center</h1>
     <div class="subtitle">Announcement Generator</div>
+  </div>
+  <div class="user-bar">
+    <img class="user-avatar" id="userAvatar" src="" alt="">
+    <span class="user-name" id="userName"></span>
+    <button class="btn-logout" onclick="signOutUser()">Sign out</button>
   </div>
 </div>
 
@@ -435,8 +510,70 @@
 
   <div class="footer">Cult Center Announcement Generator &middot; Powered by Google Cloud Text-to-Speech</div>
 </div>
+</div><!-- /appWrapper -->
 
 <script>
+// ===================== FIREBASE AUTH =====================
+const ALLOWED_DOMAIN = 'curefit.com';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyANFIYJznRMiKJch4_Awc14fO1b4ha5WDk",
+  authDomain: "cult-center-tts.firebaseapp.com",
+  projectId: "cult-center-tts",
+  storageBucket: "cult-center-tts.firebasestorage.app",
+  messagingSenderId: "959789625719",
+  appId: "1:959789625719:web:d3d007bb6028ee8dc0f172"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const googleProvider = new firebase.auth.GoogleAuthProvider();
+googleProvider.setCustomParameters({ hd: ALLOWED_DOMAIN });
+
+// Listen for auth state
+auth.onAuthStateChanged(user => {
+  if (user) {
+    const email = user.email || '';
+    if (!email.endsWith('@' + ALLOWED_DOMAIN)) {
+      // Wrong domain — sign out and show error
+      auth.signOut();
+      showAuthError(`Access denied. Only @${ALLOWED_DOMAIN} accounts are allowed.`);
+      return;
+    }
+    // Authenticated — show app
+    document.getElementById('authScreen').classList.add('app-hidden');
+    document.getElementById('appWrapper').classList.remove('app-hidden');
+    document.getElementById('userName').textContent = user.displayName || email;
+    document.getElementById('userAvatar').src = user.photoURL || '';
+    document.getElementById('userAvatar').style.display = user.photoURL ? 'block' : 'none';
+  } else {
+    // Not authenticated — show login
+    document.getElementById('authScreen').classList.remove('app-hidden');
+    document.getElementById('appWrapper').classList.add('app-hidden');
+  }
+});
+
+async function signInWithGoogle() {
+  try {
+    document.getElementById('authError').classList.remove('visible');
+    await auth.signInWithPopup(googleProvider);
+  } catch (e) {
+    if (e.code === 'auth/popup-closed-by-user') return;
+    showAuthError(e.message || 'Sign-in failed. Please try again.');
+  }
+}
+
+function signOutUser() {
+  auth.signOut();
+}
+
+function showAuthError(msg) {
+  const el = document.getElementById('authError');
+  el.textContent = msg;
+  el.classList.add('visible');
+}
+
+// ===================== APP STATE =====================
 let apiKey = '';
 let rows = [];
 let results = [];
