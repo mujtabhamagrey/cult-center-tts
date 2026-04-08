@@ -451,7 +451,7 @@
           <span class="vo-desc">Soft, calm</span>
         </button>
       </div>
-      <div class="voice-label" id="voiceLabel">en-IN-Wavenet-D &middot; Indian English &middot; Warm & Natural</div>
+      <div class="voice-label" id="voiceLabel">en-IN-Journey-F &middot; Indian English &middot; Soft & Natural</div>
     </div>
   </div>
 
@@ -586,8 +586,8 @@ let currentPlayingAudio = null;
 
 let selectedVoice = 'female';
 const VOICES = {
-  female: { name: 'en-IN-Wavenet-D', lang: 'en-IN', gender: 'FEMALE', label: 'en-IN-Wavenet-D \u00b7 Indian English \u00b7 Warm & Natural' },
-  male:   { name: 'en-IN-Wavenet-B', lang: 'en-IN', gender: 'MALE',   label: 'en-IN-Wavenet-B \u00b7 Indian English \u00b7 Clear & Natural' },
+  female: { name: 'en-IN-Journey-F', lang: 'en-IN', gender: 'FEMALE', label: 'en-IN-Journey-F \u00b7 Indian English \u00b7 Soft & Natural' },
+  male:   { name: 'en-IN-Journey-D', lang: 'en-IN', gender: 'MALE',   label: 'en-IN-Journey-D \u00b7 Indian English \u00b7 Soft & Natural' },
 };
 
 function selectVoice(v) {
@@ -773,21 +773,7 @@ function textToSSML(text) {
   s = s.replace(/:\s+/g, ':<break time="200ms"/> ');
   s = s.replace(/;\s+/g, ';<break time="180ms"/> ');
 
-  // Gentle emphasis on key words — moderate only, not strong (strong sounds unnatural)
-  const emphasisWords = [
-    'attention', 'welcome', 'exciting', 'amazing', 'special', 'congratulations',
-    'urgent', 'important', 'good morning', 'good evening',
-    'please', 'kindly', 'reminder', 'notice', 'thank you', 'thanks',
-    'immediately', 'now', 'today', 'minutes', 'session', 'class', 'studio',
-    'members', 'everyone', 'begins', 'starting', 'namaste'
-  ];
-  emphasisWords.forEach(word => {
-    const regex = new RegExp('\\b(' + word + ')\\b', 'gi');
-    s = s.replace(regex, '<emphasis level="moderate">$1</emphasis>');
-  });
-
-  // Gentle energy: slightly faster, natural pitch — excitement from emphasis, not pitch
-  return `<speak><prosody rate="106%">${s}</prosody></speak>`;
+  return `<speak>${s}</speak>`;
 }
 
 // --- Generate ---
@@ -808,9 +794,9 @@ async function generateAll() {
       const resp = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          input: { ssml: textToSSML(row.text) },
+          input: { text: row.text },
           voice: { languageCode: VOICES[selectedVoice].lang, name: VOICES[selectedVoice].name, ssmlGender: VOICES[selectedVoice].gender },
-          audioConfig: { audioEncoding: 'MP3', speakingRate: 1.0, pitch: 0, volumeGainDb: 2.5, effectsProfileId: ['large-home-entertainment-class-device'] },
+          audioConfig: { audioEncoding: 'MP3', speakingRate: 1.0, volumeGainDb: 0, effectsProfileId: ['large-home-entertainment-class-device'] },
         }),
       });
       if (!resp.ok) {
