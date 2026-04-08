@@ -426,18 +426,7 @@
 
   <!-- Step 1 -->
   <div class="step">
-    <div class="step-label"><div class="step-num">1</div><div class="step-text">API Key</div><div class="step-line"></div></div>
-    <div class="card">
-      <div class="api-row">
-        <input type="password" id="apiKey" placeholder="Paste your ElevenLabs API key" />
-        <button class="btn-sm" id="btnSave" onclick="saveKey()">Save</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Step 2 -->
-  <div class="step">
-    <div class="step-label"><div class="step-num">2</div><div class="step-text">Choose Voice</div><div class="step-line"></div></div>
+    <div class="step-label"><div class="step-num">1</div><div class="step-text">Choose Voice</div><div class="step-line"></div></div>
     <div class="card">
       <div class="voice-grid">
         <button class="voice-option active" id="voiceFemale" onclick="selectVoice('female')">
@@ -457,7 +446,7 @@
 
   <!-- Step 3 -->
   <div class="step">
-    <div class="step-label"><div class="step-num">3</div><div class="step-text">Upload Announcements</div><div class="step-line"></div></div>
+    <div class="step-label"><div class="step-num">2</div><div class="step-text">Upload Announcements</div><div class="step-line"></div></div>
     <div class="card">
       <div class="drop-zone" id="dropZone">
         <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" onchange="handleFile(this.files[0])" />
@@ -475,7 +464,7 @@
 
   <!-- Preview -->
   <div class="card hidden" id="previewCard">
-    <div class="step-label"><div class="step-num">4</div><div class="step-text">Preview &mdash; <span id="rowCount">0</span> announcements</div><div class="step-line"></div></div>
+    <div class="step-label"><div class="step-num">3</div><div class="step-text">Preview &mdash; <span id="rowCount">0</span> announcements</div><div class="step-line"></div></div>
     <div class="preview-wrap">
       <table class="preview-table">
         <thead><tr><th>#</th><th>File Name</th><th>Announcement Text</th></tr></thead>
@@ -579,7 +568,6 @@ function showAuthError(msg) {
 }
 
 // ===================== APP STATE =====================
-let apiKey = '';
 let rows = [];
 let results = [];
 let currentPlayingAudio = null;
@@ -599,13 +587,6 @@ function selectVoice(v) {
 
 // --- Init ---
 (function init() {
-  const saved = sessionStorage.getItem('cult_eleven_key') || '';
-  if (saved) {
-    apiKey = saved;
-    document.getElementById('apiKey').value = saved;
-    document.getElementById('btnSave').textContent = 'Saved';
-    document.getElementById('btnSave').classList.add('saved');
-  }
   const dz = document.getElementById('dropZone');
   dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
   dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
@@ -614,16 +595,6 @@ function selectVoice(v) {
     if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
   });
 })();
-
-function saveKey() {
-  const key = document.getElementById('apiKey').value.trim();
-  if (!key) return;
-  apiKey = key;
-  sessionStorage.setItem('cult_eleven_key', key);
-  const btn = document.getElementById('btnSave');
-  btn.textContent = 'Saved'; btn.classList.add('saved');
-  setTimeout(() => { btn.textContent = 'Save'; btn.classList.remove('saved'); }, 2000);
-}
 
 function downloadSample() {
   const csv = `announcement_name,announcement_text
@@ -759,7 +730,6 @@ async function stitchWithChimes(speechBlob) {
 
 // --- Generate ---
 async function generateAll() {
-  if (!apiKey) { alert('Please save your ElevenLabs API key first.'); return; }
   if (!rows.length) return;
   document.getElementById('btnGenerate').disabled = true;
   document.getElementById('progressCard').classList.add('visible');
@@ -774,13 +744,9 @@ async function generateAll() {
     document.getElementById('progressText').textContent = `${i+1} / ${rows.length}`;
     document.getElementById('progressCurrent').textContent = `Generating: ${row.name}`;
     try {
-      const resp = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+      const resp = await fetch(`/api/tts/${voiceId}`, {
         method: 'POST',
-        headers: {
-          'xi-api-key': apiKey,
-          'Content-Type': 'application/json',
-          'Accept': 'audio/mpeg',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           text: row.text,
           model_id: 'eleven_multilingual_v2',
