@@ -451,7 +451,7 @@
           <span class="vo-desc">Soft, calm</span>
         </button>
       </div>
-      <div class="voice-label" id="voiceLabel">en-IN-Wavenet-A &middot; Indian English &middot; Warm & Energetic</div>
+      <div class="voice-label" id="voiceLabel">en-IN-Wavenet-D &middot; Indian English &middot; Warm & Natural</div>
     </div>
   </div>
 
@@ -586,8 +586,8 @@ let currentPlayingAudio = null;
 
 let selectedVoice = 'female';
 const VOICES = {
-  female: { name: 'en-IN-Wavenet-A', lang: 'en-IN', gender: 'FEMALE', label: 'en-IN-Wavenet-A \u00b7 Indian English \u00b7 Warm & Energetic' },
-  male:   { name: 'en-IN-Wavenet-C', lang: 'en-IN', gender: 'MALE',   label: 'en-IN-Wavenet-C \u00b7 Indian English \u00b7 Warm & Energetic' },
+  female: { name: 'en-IN-Wavenet-D', lang: 'en-IN', gender: 'FEMALE', label: 'en-IN-Wavenet-D \u00b7 Indian English \u00b7 Warm & Natural' },
+  male:   { name: 'en-IN-Wavenet-B', lang: 'en-IN', gender: 'MALE',   label: 'en-IN-Wavenet-B \u00b7 Indian English \u00b7 Clear & Natural' },
 };
 
 function selectVoice(v) {
@@ -773,25 +773,21 @@ function textToSSML(text) {
   s = s.replace(/:\s+/g, ':<break time="200ms"/> ');
   s = s.replace(/;\s+/g, ';<break time="180ms"/> ');
 
-  // Strong emphasis on high-impact words
-  const strongWords = ['attention', 'welcome', 'exciting', 'amazing', 'special',
-    'congratulations', 'urgent', 'important', 'good morning', 'good evening'];
-  strongWords.forEach(word => {
-    const regex = new RegExp('\\b(' + word + ')\\b', 'gi');
-    s = s.replace(regex, '<emphasis level="strong">$1</emphasis>');
-  });
-
-  // Moderate emphasis on action words
-  const modWords = ['please', 'kindly', 'reminder', 'notice', 'thank you', 'thanks',
+  // Gentle emphasis on key words — moderate only, not strong (strong sounds unnatural)
+  const emphasisWords = [
+    'attention', 'welcome', 'exciting', 'amazing', 'special', 'congratulations',
+    'urgent', 'important', 'good morning', 'good evening',
+    'please', 'kindly', 'reminder', 'notice', 'thank you', 'thanks',
     'immediately', 'now', 'today', 'minutes', 'session', 'class', 'studio',
-    'members', 'everyone', 'begins', 'starting', 'namaste'];
-  modWords.forEach(word => {
+    'members', 'everyone', 'begins', 'starting', 'namaste'
+  ];
+  emphasisWords.forEach(word => {
     const regex = new RegExp('\\b(' + word + ')\\b', 'gi');
     s = s.replace(regex, '<emphasis level="moderate">$1</emphasis>');
   });
 
-  // Wrap with upbeat prosody for excited, energetic delivery
-  return `<speak><prosody rate="112%" pitch="+4st">${s}</prosody></speak>`;
+  // Gentle energy: slightly faster, natural pitch — excitement from emphasis, not pitch
+  return `<speak><prosody rate="106%">${s}</prosody></speak>`;
 }
 
 // --- Generate ---
@@ -814,7 +810,7 @@ async function generateAll() {
         body: JSON.stringify({
           input: { ssml: textToSSML(row.text) },
           voice: { languageCode: VOICES[selectedVoice].lang, name: VOICES[selectedVoice].name, ssmlGender: VOICES[selectedVoice].gender },
-          audioConfig: { audioEncoding: 'MP3', speakingRate: 1.0, pitch: 2.5, volumeGainDb: 4.0, effectsProfileId: ['large-home-entertainment-class-device'] },
+          audioConfig: { audioEncoding: 'MP3', speakingRate: 1.0, pitch: 0, volumeGainDb: 2.5, effectsProfileId: ['large-home-entertainment-class-device'] },
         }),
       });
       if (!resp.ok) {
