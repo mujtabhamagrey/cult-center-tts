@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 3000;
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
 
 const ALLOWED_ORIGINS = [
-  'https://cult-center-tts.up.railway.app',
+  'https://cult-tts-proxy-production.up.railway.app',
   'http://localhost:3000',
 ];
 
