@@ -429,7 +429,7 @@
     <div class="step-label"><div class="step-num">1</div><div class="step-text">API Key</div><div class="step-line"></div></div>
     <div class="card">
       <div class="api-row">
-        <input type="password" id="apiKey" placeholder="Paste your Google Cloud TTS API key" />
+        <input type="password" id="apiKey" placeholder="Paste your ElevenLabs API key" />
         <button class="btn-sm" id="btnSave" onclick="saveKey()">Save</button>
       </div>
     </div>
@@ -442,16 +442,16 @@
       <div class="voice-grid">
         <button class="voice-option active" id="voiceFemale" onclick="selectVoice('female')">
           <span class="vo-icon">&#9792;</span>
-          <span class="vo-name">Female</span>
+          <span class="vo-name">Sana</span>
           <span class="vo-desc">Soft, natural</span>
         </button>
         <button class="voice-option" id="voiceMale" onclick="selectVoice('male')">
           <span class="vo-icon">&#9794;</span>
-          <span class="vo-name">Male</span>
+          <span class="vo-name">Ruhaan</span>
           <span class="vo-desc">Soft, calm</span>
         </button>
       </div>
-      <div class="voice-label" id="voiceLabel">en-IN-Journey-F &middot; Indian English &middot; Soft & Natural</div>
+      <div class="voice-label" id="voiceLabel">Sana &middot; ElevenLabs &middot; Natural Indian Voice</div>
     </div>
   </div>
 
@@ -512,7 +512,7 @@
     </button>
   </div>
 
-  <div class="footer">Cult Center Announcement Generator &middot; Powered by Google Cloud Text-to-Speech</div>
+  <div class="footer">Cult Center Announcement Generator &middot; Powered by ElevenLabs</div>
 </div>
 </div><!-- /appWrapper -->
 
@@ -586,8 +586,8 @@ let currentPlayingAudio = null;
 
 let selectedVoice = 'female';
 const VOICES = {
-  female: { name: 'en-IN-Journey-F', lang: 'en-IN', gender: 'FEMALE', label: 'en-IN-Journey-F \u00b7 Indian English \u00b7 Soft & Natural' },
-  male:   { name: 'en-IN-Journey-D', lang: 'en-IN', gender: 'MALE',   label: 'en-IN-Journey-D \u00b7 Indian English \u00b7 Soft & Natural' },
+  female: { id: 'tKZQTIqwDrPzLv6MrPxF', name: 'Sana', label: 'Sana \u00b7 ElevenLabs \u00b7 Natural Indian Voice' },
+  male:   { id: 'siw1N9V8LmYeEWKyWBxv', name: 'Ruhaan', label: 'Ruhaan \u00b7 ElevenLabs \u00b7 Natural Indian Voice' },
 };
 
 function selectVoice(v) {
@@ -599,7 +599,7 @@ function selectVoice(v) {
 
 // --- Init ---
 (function init() {
-  const saved = sessionStorage.getItem('cult_google_tts_key') || '';
+  const saved = sessionStorage.getItem('cult_eleven_key') || '';
   if (saved) {
     apiKey = saved;
     document.getElementById('apiKey').value = saved;
@@ -619,7 +619,7 @@ function saveKey() {
   const key = document.getElementById('apiKey').value.trim();
   if (!key) return;
   apiKey = key;
-  sessionStorage.setItem('cult_google_tts_key', key);
+  sessionStorage.setItem('cult_eleven_key', key);
   const btn = document.getElementById('btnSave');
   btn.textContent = 'Saved'; btn.classList.add('saved');
   setTimeout(() => { btn.textContent = 'Save'; btn.classList.remove('saved'); }, 2000);
@@ -757,33 +757,16 @@ async function stitchWithChimes(speechBlob) {
   return samplesToWav(combined, sr);
 }
 
-// --- SSML Builder (adds energy, emphasis, natural pauses) ---
-function textToSSML(text) {
-  let s = text;
-
-  // Add natural pauses after sentence-ending punctuation
-  s = s.replace(/\.\s+/g, '.<break time="300ms"/> ');
-  s = s.replace(/!\s+/g, '!<break time="250ms"/> ');
-  s = s.replace(/\?\s+/g, '?<break time="300ms"/> ');
-
-  // Breathing pauses after commas
-  s = s.replace(/,\s+/g, ',<break time="150ms"/> ');
-
-  // Pauses after colons/semicolons
-  s = s.replace(/:\s+/g, ':<break time="200ms"/> ');
-  s = s.replace(/;\s+/g, ';<break time="180ms"/> ');
-
-  return `<speak>${s}</speak>`;
-}
-
 // --- Generate ---
 async function generateAll() {
-  if (!apiKey) { alert('Please save your Google Cloud TTS API key first.'); return; }
+  if (!apiKey) { alert('Please save your ElevenLabs API key first.'); return; }
   if (!rows.length) return;
   document.getElementById('btnGenerate').disabled = true;
   document.getElementById('progressCard').classList.add('visible');
   document.getElementById('resultsCard').classList.remove('visible');
   results = [];
+
+  const voiceId = VOICES[selectedVoice].id;
 
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
@@ -791,28 +774,31 @@ async function generateAll() {
     document.getElementById('progressText').textContent = `${i+1} / ${rows.length}`;
     document.getElementById('progressCurrent').textContent = `Generating: ${row.name}`;
     try {
-      const resp = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
+      const resp = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+        method: 'POST',
+        headers: {
+          'xi-api-key': apiKey,
+          'Content-Type': 'application/json',
+          'Accept': 'audio/mpeg',
+        },
         body: JSON.stringify({
-          input: { text: row.text },
-          voice: { languageCode: VOICES[selectedVoice].lang, name: VOICES[selectedVoice].name, ssmlGender: VOICES[selectedVoice].gender },
-          audioConfig: { audioEncoding: 'MP3', speakingRate: 1.0, volumeGainDb: 0, effectsProfileId: ['large-home-entertainment-class-device'] },
+          text: row.text,
+          model_id: 'eleven_multilingual_v2',
+          voice_settings: { stability: 0.5, similarity_boost: 0.75, speed: 1.0 },
         }),
       });
       if (!resp.ok) {
         let msg = 'API error';
-        try { const e = await resp.json(); msg = (e.error?.message||msg).substring(0,200); } catch(e) {}
+        try { const e = await resp.json(); msg = (e.detail?.message || e.detail || msg).toString().substring(0,200); } catch(e) {}
         results.push({ name: row.name, blob: null, error: msg });
       } else {
-        const data = await resp.json();
-        const raw = atob(data.audioContent), bytes = new Uint8Array(raw.length);
-        for (let j = 0; j < raw.length; j++) bytes[j] = raw.charCodeAt(j);
+        const speechBlob = await resp.blob();
         document.getElementById('progressCurrent').textContent = `Adding tones: ${row.name}`;
-        const blob = await stitchWithChimes(new Blob([bytes], { type: 'audio/mpeg' }));
+        const blob = await stitchWithChimes(speechBlob);
         results.push({ name: row.name, blob, error: null });
       }
     } catch (e) { results.push({ name: row.name, blob: null, error: e.message }); }
-    if (i < rows.length - 1) await new Promise(r => setTimeout(r, 200));
+    if (i < rows.length - 1) await new Promise(r => setTimeout(r, 300));
   }
   document.getElementById('progressCurrent').textContent = 'All done!';
   document.getElementById('btnGenerate').disabled = false;
