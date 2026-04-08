@@ -8,244 +8,317 @@
         integrity="sha384-vtjasyidUo0kW94K5MXDXntzOJpQgBKXmE7e2Ga4LG0skTTLeBi97eFAXsqewJjw"
         crossorigin="anonymous"></script>
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
     --cult-red: #E53935;
-    --cult-red-glow: rgba(229,57,53,0.15);
-    --bg: #0c0c18;
-    --surface: #161628;
-    --surface2: #1e1e38;
-    --border: rgba(255,255,255,0.07);
-    --text: #f0f0f5;
-    --text-muted: #8888a8;
-    --green: #4caf50;
+    --cult-red-dark: #c62828;
+    --cult-red-glow: rgba(229,57,53,0.12);
+    --bg: #08080f;
+    --surface: #111120;
+    --surface2: #191930;
+    --surface3: #222244;
+    --border: rgba(255,255,255,0.06);
+    --border-hover: rgba(229,57,53,0.2);
+    --text: #ededf5;
+    --text-muted: #7575a0;
+    --green: #43a047;
+    --green-glow: rgba(67,160,71,0.15);
+    --radius: 16px;
   }
   body {
     font-family: 'Inter', -apple-system, sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-image: radial-gradient(ellipse 80% 40% at 50% -10%, rgba(229,57,53,0.06), transparent);
+    display: flex; flex-direction: column; align-items: center;
+    background-image:
+      radial-gradient(ellipse 70% 50% at 50% -5%, rgba(229,57,53,0.07), transparent),
+      radial-gradient(ellipse 50% 30% at 80% 100%, rgba(100,60,200,0.04), transparent);
   }
   ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 3px; }
 
-  /* Header */
+  /* ---- Header ---- */
   .header {
-    width: 100%; padding: 18px 32px;
-    display: flex; align-items: center; gap: 14px;
-    background: var(--surface); border-bottom: 1px solid var(--border);
+    width: 100%; padding: 16px 32px;
+    display: flex; align-items: center; gap: 16px;
+    background: linear-gradient(180deg, rgba(17,17,32,0.95), rgba(17,17,32,0.8));
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(16px);
+    position: sticky; top: 0; z-index: 10;
   }
   .logo {
-    width: 40px; height: 40px; background: var(--cult-red); border-radius: 10px;
+    width: 42px; height: 42px;
+    background: linear-gradient(135deg, var(--cult-red), #ff5252);
+    border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
     font-weight: 800; font-size: 18px; color: #fff;
-    box-shadow: 0 2px 12px rgba(229,57,53,0.3);
+    box-shadow: 0 4px 16px rgba(229,57,53,0.3);
+    letter-spacing: -0.5px;
   }
-  .header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
-  .header .subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .header-text h1 { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+  .header-text .subtitle { font-size: 11px; color: var(--text-muted); margin-top: 2px; letter-spacing: 0.3px; }
 
   .container {
-    width: 100%; max-width: 700px;
-    padding: 36px 24px 80px;
-    display: flex; flex-direction: column; gap: 20px;
+    width: 100%; max-width: 680px;
+    padding: 32px 20px 80px;
+    display: flex; flex-direction: column; gap: 24px;
   }
 
-  /* Steps */
+  /* ---- Hero ---- */
+  .hero {
+    text-align: center; padding: 8px 0 4px;
+  }
+  .hero h2 {
+    font-size: 28px; font-weight: 800; letter-spacing: -1px;
+    background: linear-gradient(135deg, var(--text), var(--cult-red));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero p { font-size: 14px; color: var(--text-muted); margin-top: 8px; line-height: 1.6; }
+
+  /* ---- Steps ---- */
+  .step { animation: fadeUp 0.5s ease both; }
+  .step:nth-child(2) { animation-delay: 0.05s; }
+  .step:nth-child(3) { animation-delay: 0.1s; }
+  .step:nth-child(4) { animation-delay: 0.15s; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
   .step-label {
-    display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
   }
   .step-num {
-    width: 26px; height: 26px; border-radius: 50%;
-    background: var(--cult-red); color: #fff;
-    font-size: 12px; font-weight: 700;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--cult-red), #ff5252);
+    color: #fff; font-size: 12px; font-weight: 800;
     display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 2px 8px rgba(229,57,53,0.25);
+    box-shadow: 0 2px 10px rgba(229,57,53,0.3);
+    flex-shrink: 0;
   }
-  .step-text { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; }
+  .step-text {
+    font-size: 12px; font-weight: 700; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .step-line {
+    flex: 1; height: 1px; background: var(--border); margin-left: 4px;
+  }
 
-  /* Cards */
+  /* ---- Cards ---- */
   .card {
-    background: var(--surface); border-radius: 16px; padding: 24px;
-    border: 1px solid var(--border); transition: border-color 0.3s;
+    background: var(--surface); border-radius: var(--radius); padding: 22px;
+    border: 1px solid var(--border);
+    transition: border-color 0.3s, box-shadow 0.3s;
   }
-  .card:hover { border-color: rgba(229,57,53,0.15); }
+  .card:hover { border-color: var(--border-hover); }
 
-  /* API Key */
+  /* ---- API Key ---- */
   .api-row { display: flex; gap: 10px; }
   .api-row input {
     flex: 1; background: var(--bg); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 16px; color: var(--text);
+    border-radius: 12px; padding: 13px 16px; color: var(--text);
     font-size: 14px; font-family: 'Inter', sans-serif; outline: none;
-    transition: border-color 0.2s;
+    transition: all 0.25s;
   }
   .api-row input:focus { border-color: var(--cult-red); box-shadow: 0 0 0 3px var(--cult-red-glow); }
+  .api-row input::placeholder { color: var(--text-muted); opacity: 0.5; }
   .btn-sm {
     background: var(--surface2); color: var(--text); border: 1px solid var(--border);
-    padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 500;
+    padding: 11px 22px; border-radius: 12px; font-size: 13px; font-weight: 600;
     cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;
     white-space: nowrap;
   }
   .btn-sm:hover { background: var(--cult-red); border-color: var(--cult-red); }
-  .btn-sm.saved { background: var(--green); border-color: var(--green); }
+  .btn-sm.saved { background: var(--green); border-color: var(--green); color: #fff; }
 
-  /* Voice display */
-  .voice-row {
-    display: flex; align-items: center; gap: 14px; padding: 4px 0;
-  }
-  .voice-avatar {
-    width: 44px; height: 44px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--cult-red), #ff7043);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px; box-shadow: 0 4px 16px rgba(229,57,53,0.2);
-  }
-  .voice-name { font-size: 15px; font-weight: 600; }
-  .voice-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-
-  /* Voice toggle */
+  /* ---- Voice Toggle ---- */
+  .voice-grid { display: flex; gap: 12px; }
   .voice-option {
-    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
-    padding: 18px 16px; border-radius: 12px; border: 2px solid var(--border);
-    background: var(--bg); cursor: pointer; transition: all 0.25s;
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 20px 16px; border-radius: 14px; border: 2px solid var(--border);
+    background: var(--bg); cursor: pointer; transition: all 0.3s;
     font-family: 'Inter', sans-serif; color: var(--text-muted);
+    position: relative; overflow: hidden;
   }
-  .voice-option:hover { border-color: rgba(229,57,53,0.3); }
+  .voice-option::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 30%, var(--cult-red-glow), transparent);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .voice-option:hover { border-color: rgba(229,57,53,0.25); }
+  .voice-option:hover::before { opacity: 0.5; }
   .voice-option.active {
-    border-color: var(--cult-red); background: rgba(229,57,53,0.06);
-    color: var(--text); box-shadow: 0 0 20px var(--cult-red-glow);
+    border-color: var(--cult-red); color: var(--text);
+    box-shadow: 0 0 24px var(--cult-red-glow), inset 0 0 20px var(--cult-red-glow);
   }
-  .vo-icon { font-size: 28px; }
-  .vo-name { font-size: 15px; font-weight: 700; }
-  .vo-desc { font-size: 11px; color: var(--text-muted); }
+  .voice-option.active::before { opacity: 1; }
+  .vo-icon { font-size: 32px; position: relative; }
+  .vo-name { font-size: 15px; font-weight: 700; position: relative; }
+  .vo-desc { font-size: 11px; color: var(--text-muted); position: relative; }
+  .voice-label {
+    font-size: 11px; color: var(--text-muted); margin-top: 10px;
+    text-align: center; font-style: italic;
+  }
 
-  /* Upload */
+  /* ---- Upload ---- */
   .drop-zone {
-    border: 2px dashed rgba(229,57,53,0.25); border-radius: 16px;
-    padding: 44px 24px; text-align: center; cursor: pointer;
-    transition: all 0.3s; position: relative;
+    border: 2px dashed rgba(229,57,53,0.2); border-radius: var(--radius);
+    padding: 48px 24px; text-align: center; cursor: pointer;
+    transition: all 0.35s; position: relative;
+    background: linear-gradient(180deg, rgba(229,57,53,0.02), transparent);
   }
   .drop-zone:hover, .drop-zone.dragover {
     border-color: var(--cult-red); background: rgba(229,57,53,0.04);
-    box-shadow: 0 0 30px var(--cult-red-glow);
+    box-shadow: 0 0 40px var(--cult-red-glow);
   }
   .drop-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-  .drop-icon { font-size: 40px; margin-bottom: 14px; filter: grayscale(0.3); }
-  .drop-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .drop-icon { font-size: 44px; margin-bottom: 14px; }
+  .drop-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
   .drop-hint { font-size: 13px; color: var(--text-muted); }
   .file-name {
     margin-top: 14px; font-size: 13px; color: var(--cult-red);
     font-weight: 600; display: none;
+    padding: 6px 14px; background: rgba(229,57,53,0.08);
+    border-radius: 8px; display: none;
   }
-  .format-hint {
-    font-size: 12px; color: var(--text-muted); line-height: 1.7;
-    margin-top: 16px; padding: 14px 16px; background: var(--bg);
-    border-radius: 10px; display: flex; justify-content: space-between;
-    align-items: center; flex-wrap: wrap; gap: 10px;
+  .format-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 10px;
+    margin-top: 16px; padding: 12px 16px;
+    background: var(--bg); border-radius: 10px; border: 1px solid var(--border);
   }
-  .format-hint code {
+  .format-bar span { font-size: 12px; color: var(--text-muted); }
+  .format-bar code {
     background: var(--surface2); padding: 2px 7px; border-radius: 4px;
-    font-size: 11px; color: var(--cult-red);
+    font-size: 11px; color: var(--cult-red); font-weight: 500;
   }
   .btn-sample {
-    font-size: 11px; color: var(--cult-red); background: none; border: 1px solid var(--cult-red);
-    padding: 4px 10px; border-radius: 6px; cursor: pointer; font-family: 'Inter', sans-serif;
-    font-weight: 500; transition: all 0.2s; white-space: nowrap;
+    font-size: 11px; color: var(--cult-red); background: none;
+    border: 1px solid rgba(229,57,53,0.4); padding: 5px 12px;
+    border-radius: 8px; cursor: pointer; font-family: 'Inter', sans-serif;
+    font-weight: 600; transition: all 0.2s; white-space: nowrap;
   }
-  .btn-sample:hover { background: var(--cult-red); color: #fff; }
+  .btn-sample:hover { background: var(--cult-red); color: #fff; border-color: var(--cult-red); }
 
-  /* Preview table */
+  /* ---- Preview ---- */
   .preview-wrap { overflow-x: auto; margin-top: 8px; }
   .preview-table { width: 100%; border-collapse: collapse; }
   .preview-table th {
     text-align: left; font-size: 10px; font-weight: 700; color: var(--text-muted);
     text-transform: uppercase; letter-spacing: 1px; padding: 10px 14px;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--border); background: var(--bg);
   }
+  .preview-table th:first-child { border-radius: 8px 0 0 0; }
+  .preview-table th:last-child { border-radius: 0 8px 0 0; }
   .preview-table td {
     padding: 12px 14px; font-size: 13px; border-bottom: 1px solid var(--border);
-    vertical-align: top; line-height: 1.5;
+    vertical-align: top; line-height: 1.6;
   }
   .preview-table tr:last-child td { border-bottom: none; }
   .preview-table tbody tr { transition: background 0.2s; }
   .preview-table tbody tr:hover { background: rgba(229,57,53,0.03); }
-  .row-num { color: var(--text-muted); font-size: 11px; width: 30px; font-weight: 600; }
+  .row-num { color: var(--text-muted); font-size: 11px; width: 36px; font-weight: 700; }
   .row-name { color: var(--cult-red); font-weight: 600; white-space: nowrap; }
   .row-text { color: var(--text); }
 
-  /* Generate button */
+  /* ---- Generate Button ---- */
   .btn-generate {
-    width: 100%; padding: 18px; border: none; border-radius: 14px;
+    width: 100%; padding: 20px; border: none; border-radius: 14px;
     font-size: 16px; font-weight: 700; font-family: 'Inter', sans-serif;
-    cursor: pointer; transition: all 0.25s;
-    background: linear-gradient(135deg, var(--cult-red), #d32f2f);
-    color: #fff; box-shadow: 0 4px 24px rgba(229,57,53,0.35);
+    cursor: pointer; transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    background: linear-gradient(135deg, var(--cult-red), var(--cult-red-dark));
+    color: #fff; box-shadow: 0 6px 28px rgba(229,57,53,0.35);
     display: flex; align-items: center; justify-content: center; gap: 10px;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.3px; position: relative; overflow: hidden;
   }
-  .btn-generate:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(229,57,53,0.45); }
+  .btn-generate::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, transparent, rgba(255,255,255,0.1), transparent);
+    transform: translateX(-100%); transition: transform 0.6s;
+  }
+  .btn-generate:hover:not(:disabled)::before { transform: translateX(100%); }
+  .btn-generate:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(229,57,53,0.45); }
   .btn-generate:active:not(:disabled) { transform: translateY(0); }
-  .btn-generate:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .btn-generate:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
 
-  /* Progress */
+  /* ---- Progress ---- */
   .progress-card { display: none; }
   .progress-card.visible { display: block; }
   .progress-outer {
-    width: 100%; height: 8px; background: var(--bg);
-    border-radius: 4px; overflow: hidden; margin: 16px 0;
+    width: 100%; height: 6px; background: var(--bg);
+    border-radius: 3px; overflow: hidden; margin: 16px 0;
   }
   .progress-inner {
-    height: 100%; width: 0%; border-radius: 4px;
-    background: linear-gradient(90deg, var(--cult-red), #ff7043);
+    height: 100%; width: 0%; border-radius: 3px;
+    background: linear-gradient(90deg, var(--cult-red), #ff7043, var(--cult-red));
+    background-size: 200% 100%;
+    animation: shimmer 1.5s linear infinite;
     transition: width 0.3s;
   }
-  .progress-text { font-size: 13px; color: var(--text-muted); text-align: center; }
+  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  .progress-text { font-size: 13px; color: var(--text-muted); text-align: center; font-variant-numeric: tabular-nums; }
   .progress-current {
     font-size: 14px; color: var(--text); text-align: center;
-    margin-top: 8px; font-weight: 500;
+    margin-top: 8px; font-weight: 600;
   }
 
-  /* Results */
+  /* ---- Results ---- */
   .results-card { display: none; }
   .results-card.visible { display: block; }
+  .results-summary {
+    display: flex; gap: 12px; margin-bottom: 16px;
+  }
+  .summary-badge {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
+  }
+  .summary-badge.success { background: var(--green-glow); color: var(--green); }
+  .summary-badge.fail { background: rgba(239,83,80,0.1); color: #ef5350; }
   .result-item {
     display: flex; align-items: center; gap: 10px; padding: 14px 16px;
     background: var(--bg); border-radius: 12px; margin-bottom: 8px;
-    border: 1px solid var(--border); transition: all 0.2s;
+    border: 1px solid var(--border); transition: all 0.25s;
   }
-  .result-item:hover { border-color: rgba(229,57,53,0.2); }
+  .result-item:hover { border-color: var(--border-hover); background: var(--surface2); }
   .result-icon { font-size: 18px; flex-shrink: 0; }
   .result-name { flex: 1; font-size: 14px; font-weight: 500; }
-  .result-status { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .result-status { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
   .result-status.done { color: var(--green); }
   .result-status.error { color: #ef5350; }
   .btn-play-sm, .btn-dl {
-    padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border);
+    padding: 7px 14px; border-radius: 8px; border: 1px solid var(--border);
     background: var(--surface2); color: var(--text); font-size: 12px;
-    font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif;
-    transition: all 0.2s; display: flex; align-items: center; gap: 4px;
+    font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: all 0.2s; display: flex; align-items: center; gap: 5px;
+    white-space: nowrap;
   }
-  .btn-play-sm:hover, .btn-dl:hover { background: var(--cult-red); border-color: var(--cult-red); }
+  .btn-play-sm:hover { background: var(--cult-red); border-color: var(--cult-red); }
+  .btn-dl:hover { background: var(--green); border-color: var(--green); }
   .btn-dl-all {
     width: 100%; padding: 16px; border: none; border-radius: 12px;
-    background: linear-gradient(135deg, var(--surface2), #252548);
-    color: var(--text); font-size: 15px; font-weight: 600;
+    background: var(--surface2); color: var(--text); font-size: 15px; font-weight: 700;
     cursor: pointer; font-family: 'Inter', sans-serif;
-    transition: all 0.2s; margin-top: 14px;
+    transition: all 0.25s; margin-top: 14px;
     display: flex; align-items: center; justify-content: center; gap: 10px;
     border: 1px solid var(--border);
   }
-  .btn-dl-all:hover { background: var(--cult-red); border-color: var(--cult-red); }
+  .btn-dl-all:hover { background: var(--green); border-color: var(--green); color: #fff; box-shadow: 0 4px 20px var(--green-glow); }
 
   .hidden { display: none !important; }
 
+  /* ---- Footer ---- */
+  .footer {
+    text-align: center; padding: 20px; font-size: 11px;
+    color: var(--text-muted); opacity: 0.5;
+  }
+
   @media (max-width: 520px) {
-    .container { padding: 24px 16px 60px; }
-    .header { padding: 16px 20px; }
+    .container { padding: 20px 14px 60px; }
+    .header { padding: 14px 16px; }
+    .hero h2 { font-size: 22px; }
+    .voice-grid { flex-direction: column; }
   }
 </style>
 </head>
@@ -253,30 +326,35 @@
 
 <div class="header">
   <div class="logo">C</div>
-  <div>
-    <h1>Announcement Generator</h1>
-    <div class="subtitle">Cult Center — Batch Text to Speech</div>
+  <div class="header-text">
+    <h1>Cult Center</h1>
+    <div class="subtitle">Announcement Generator</div>
   </div>
 </div>
 
 <div class="container">
 
-  <!-- Step 1: API Key -->
-  <div>
-    <div class="step-label"><div class="step-num">1</div><div class="step-text">API Key</div></div>
+  <div class="hero">
+    <h2>Batch Announcements, One Click</h2>
+    <p>Upload your announcements, pick a voice, and download ready-to-play audio files with intro and outro tones.</p>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="step">
+    <div class="step-label"><div class="step-num">1</div><div class="step-text">API Key</div><div class="step-line"></div></div>
     <div class="card">
       <div class="api-row">
-        <input type="password" id="apiKey" placeholder="Google Cloud TTS API key" />
+        <input type="password" id="apiKey" placeholder="Paste your Google Cloud TTS API key" />
         <button class="btn-sm" id="btnSave" onclick="saveKey()">Save</button>
       </div>
     </div>
   </div>
 
-  <!-- Step 2: Voice (fixed) -->
-  <div>
-    <div class="step-label"><div class="step-num">2</div><div class="step-text">Voice</div></div>
+  <!-- Step 2 -->
+  <div class="step">
+    <div class="step-label"><div class="step-num">2</div><div class="step-text">Choose Voice</div><div class="step-line"></div></div>
     <div class="card">
-      <div style="display:flex; gap:10px; margin-bottom:4px;">
+      <div class="voice-grid">
         <button class="voice-option active" id="voiceFemale" onclick="selectVoice('female')">
           <span class="vo-icon">&#9792;</span>
           <span class="vo-name">Female</span>
@@ -288,13 +366,13 @@
           <span class="vo-desc">Soft, calm</span>
         </button>
       </div>
-      <div style="font-size:11px; color:var(--text-muted); margin-top:8px; text-align:center;" id="voiceLabel">en-IN-Journey-F &middot; Indian English &middot; Google Journey</div>
+      <div class="voice-label" id="voiceLabel">en-IN-Journey-F &middot; Indian English &middot; Google Journey</div>
     </div>
   </div>
 
-  <!-- Step 3: Upload -->
-  <div>
-    <div class="step-label"><div class="step-num">3</div><div class="step-text">Upload Announcements</div></div>
+  <!-- Step 3 -->
+  <div class="step">
+    <div class="step-label"><div class="step-num">3</div><div class="step-text">Upload Announcements</div><div class="step-line"></div></div>
     <div class="card">
       <div class="drop-zone" id="dropZone">
         <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" onchange="handleFile(this.files[0])" />
@@ -303,16 +381,16 @@
         <div class="drop-hint">or click to browse</div>
         <div class="file-name" id="fileName"></div>
       </div>
-      <div class="format-hint">
-        <span>Column A = <code>announcement_name</code> &nbsp; Column B = <code>announcement_text</code></span>
-        <button class="btn-sample" onclick="downloadSample()">Download Sample CSV</button>
+      <div class="format-bar">
+        <span>Column A = <code>name</code> &nbsp; Column B = <code>text</code></span>
+        <button class="btn-sample" onclick="downloadSample()">&#8595; Sample CSV</button>
       </div>
     </div>
   </div>
 
   <!-- Preview -->
   <div class="card hidden" id="previewCard">
-    <div class="step-label"><div class="step-num">4</div><div class="step-text">Preview — <span id="rowCount">0</span> announcements</div></div>
+    <div class="step-label"><div class="step-num">4</div><div class="step-text">Preview &mdash; <span id="rowCount">0</span> announcements</div><div class="step-line"></div></div>
     <div class="preview-wrap">
       <table class="preview-table">
         <thead><tr><th>#</th><th>File Name</th><th>Announcement Text</th></tr></thead>
@@ -324,7 +402,7 @@
   <!-- Generate -->
   <button class="btn-generate hidden" id="btnGenerate" onclick="generateAll()">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 8.5v7a4.49 4.49 0 002.5-3.5zM14 3.23v2.06a6.51 6.51 0 010 13.42v2.06A8.51 8.51 0 0014 3.23z"/></svg>
-    Generate All MP3s
+    Generate All Audio Files
   </button>
 
   <!-- Progress -->
@@ -336,13 +414,20 @@
 
   <!-- Results -->
   <div class="card results-card" id="resultsCard">
-    <div class="step-label" style="margin-bottom:16px"><div class="step-num" style="background:var(--green)">&#10003;</div><div class="step-text">Generated Files</div></div>
+    <div class="step-label" style="margin-bottom:14px">
+      <div class="step-num" style="background:linear-gradient(135deg, var(--green), #66bb6a)">&#10003;</div>
+      <div class="step-text">Complete</div>
+      <div class="step-line"></div>
+    </div>
+    <div class="results-summary" id="resultsSummary"></div>
     <div id="resultsList"></div>
     <button class="btn-dl-all" onclick="downloadAll()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Download All MP3s
+      Download All
     </button>
   </div>
+
+  <div class="footer">Cult Center Announcement Generator &middot; Powered by Google Cloud Text-to-Speech</div>
 </div>
 
 <script>
@@ -353,8 +438,8 @@ let currentPlayingAudio = null;
 
 let selectedVoice = 'female';
 const VOICES = {
-  female: { name: 'en-IN-Journey-F', lang: 'en-IN', gender: 'FEMALE', label: 'en-IN-Journey-F · Indian English · Google Journey' },
-  male:   { name: 'en-IN-Journey-D', lang: 'en-IN', gender: 'MALE',   label: 'en-IN-Journey-D · Indian English · Google Journey' },
+  female: { name: 'en-IN-Journey-F', lang: 'en-IN', gender: 'FEMALE', label: 'en-IN-Journey-F \u00b7 Indian English \u00b7 Google Journey' },
+  male:   { name: 'en-IN-Journey-D', lang: 'en-IN', gender: 'MALE',   label: 'en-IN-Journey-D \u00b7 Indian English \u00b7 Google Journey' },
 };
 
 function selectVoice(v) {
@@ -382,7 +467,6 @@ function selectVoice(v) {
   });
 })();
 
-// --- API Key ---
 function saveKey() {
   const key = document.getElementById('apiKey').value.trim();
   if (!key) return;
@@ -393,7 +477,6 @@ function saveKey() {
   setTimeout(() => { btn.textContent = 'Save'; btn.classList.remove('saved'); }, 2000);
 }
 
-// --- Sample CSV ---
 function downloadSample() {
   const csv = `announcement_name,announcement_text
 morning_welcome,"Good morning members! Welcome to Cult Fit. We hope you have an amazing workout today."
@@ -407,44 +490,41 @@ closing,"Thank you for visiting Cult today. Remember to hydrate and recover well
   a.click();
 }
 
-// --- File Handling ---
 function handleFile(file) {
   if (!file) return;
-  document.getElementById('fileName').textContent = file.name;
-  document.getElementById('fileName').style.display = 'block';
+  const fn = document.getElementById('fileName');
+  fn.textContent = file.name;
+  fn.style.display = 'inline-block';
   const ext = file.name.split('.').pop().toLowerCase();
   if (ext === 'csv') {
-    const reader = new FileReader();
-    reader.onload = e => parseCSV(e.target.result);
-    reader.readAsText(file);
+    const r = new FileReader();
+    r.onload = e => parseCSV(e.target.result);
+    r.readAsText(file);
   } else {
-    const reader = new FileReader();
-    reader.onload = e => {
+    const r = new FileReader();
+    r.onload = e => {
       const wb = XLSX.read(e.target.result, { type: 'array' });
-      const csv = XLSX.utils.sheet_to_csv(wb.Sheets[wb.SheetNames[0]]);
-      parseCSV(csv);
+      parseCSV(XLSX.utils.sheet_to_csv(wb.Sheets[wb.SheetNames[0]]));
     };
-    reader.readAsArrayBuffer(file);
+    r.readAsArrayBuffer(file);
   }
 }
 
 function parseCSV(csv) {
   const lines = csv.split('\n').map(l => l.trim()).filter(l => l);
   rows = [];
-  const MAX_ROWS = 50;
-  const MAX_TEXT_LEN = 5000;
+  const MAX_ROWS = 50, MAX_TEXT = 5000;
   for (let i = 1; i < lines.length && rows.length < MAX_ROWS; i++) {
     const cols = parseCSVLine(lines[i]);
     if (cols.length >= 2 && cols[0] && cols[1]) {
-      // Strip CSV formula injection characters
       let name = cols[0].trim().replace(/^[=+\-@\t\r]+/, '');
       let text = cols[1].trim().replace(/^[=+\-@\t\r]+/, '');
-      if (text.length > MAX_TEXT_LEN) text = text.substring(0, MAX_TEXT_LEN);
+      if (text.length > MAX_TEXT) text = text.substring(0, MAX_TEXT);
       if (name && text) rows.push({ name, text });
     }
   }
   if (lines.length - 1 > MAX_ROWS) alert(`Only the first ${MAX_ROWS} rows will be processed.`);
-  if (rows.length === 0) { alert('No valid rows found. Ensure Column A = name, Column B = text.'); return; }
+  if (!rows.length) { alert('No valid rows found. Column A = name, Column B = text.'); return; }
 
   document.getElementById('rowCount').textContent = rows.length;
   const tbody = document.getElementById('previewBody');
@@ -461,133 +541,78 @@ function parseCSV(csv) {
 }
 
 function parseCSVLine(line) {
-  const result = []; let current = ''; let inQ = false;
+  const result = []; let cur = ''; let inQ = false;
   for (let i = 0; i < line.length; i++) {
     const ch = line[i];
-    if (ch === '"') { if (inQ && line[i+1] === '"') { current += '"'; i++; } else inQ = !inQ; }
-    else if (ch === ',' && !inQ) { result.push(current); current = ''; }
-    else current += ch;
+    if (ch === '"') { if (inQ && line[i+1] === '"') { cur += '"'; i++; } else inQ = !inQ; }
+    else if (ch === ',' && !inQ) { result.push(cur); cur = ''; }
+    else cur += ch;
   }
-  result.push(current);
+  result.push(cur);
   return result;
 }
 
-// --- Chime Generator (Web Audio API) ---
-// Creates warm, melodious ding-dong-ding tones like Indian airport/mall announcements
+// --- Chime Generator ---
 function generateChime(type) {
-  // type: 'intro' (ascending C4→E4→G4) or 'outro' (descending G4→E4→C4)
-  const sampleRate = 44100;
-  const duration = 1.2; // seconds
-  const totalSamples = Math.floor(sampleRate * duration);
-  const buffer = new Float32Array(totalSamples);
-  const vol = 0.5;
-
+  const sr = 44100, dur = 1.2, total = Math.floor(sr * dur);
+  const buf = new Float32Array(total), vol = 0.5;
   const notes = type === 'intro'
-    ? [{ freq: 523.25, start: 0, dur: 0.8 }, { freq: 1046.50, start: 0.25, dur: 0.9 }]   // C5 → C6
-    : [{ freq: 1046.50, start: 0, dur: 0.7 }, { freq: 523.25, start: 0.25, dur: 0.9 }];   // C6 → C5
-
-  for (const note of notes) {
-    const startSample = Math.floor(note.start * sampleRate);
-    const noteSamples = Math.floor(note.dur * sampleRate);
-    for (let i = 0; i < noteSamples && (startSample + i) < totalSamples; i++) {
-      const t = i / sampleRate;
-      // Bell envelope: quick attack, exponential decay
-      const attack = Math.min(1, t / 0.015);
-      const decay = Math.exp(-t * 4.5);
-      const env = attack * decay * vol;
-      // Fundamental + soft harmonics for bell timbre
-      const sample = Math.sin(2 * Math.PI * note.freq * t)
-                   + 0.15 * Math.sin(2 * Math.PI * note.freq * 2 * t)
-                   + 0.06 * Math.sin(2 * Math.PI * note.freq * 3 * t);
-      buffer[startSample + i] += sample * env;
+    ? [{ freq: 523.25, start: 0, dur: 0.8 }, { freq: 1046.50, start: 0.25, dur: 0.9 }]
+    : [{ freq: 1046.50, start: 0, dur: 0.7 }, { freq: 523.25, start: 0.25, dur: 0.9 }];
+  for (const n of notes) {
+    const s0 = Math.floor(n.start * sr), ns = Math.floor(n.dur * sr);
+    for (let i = 0; i < ns && (s0 + i) < total; i++) {
+      const t = i / sr;
+      const env = Math.min(1, t / 0.015) * Math.exp(-t * 4.5) * vol;
+      buf[s0 + i] += (Math.sin(2*Math.PI*n.freq*t) + 0.15*Math.sin(4*Math.PI*n.freq*t) + 0.06*Math.sin(6*Math.PI*n.freq*t)) * env;
     }
   }
-
-  // Clamp
-  for (let i = 0; i < totalSamples; i++) buffer[i] = Math.max(-1, Math.min(1, buffer[i]));
-  return buffer;
+  for (let i = 0; i < total; i++) buf[i] = Math.max(-1, Math.min(1, buf[i]));
+  return buf;
 }
 
-// Convert float samples to WAV blob
-function samplesToWav(samples, sampleRate) {
-  const numSamples = samples.length;
-  const buffer = new ArrayBuffer(44 + numSamples * 2);
-  const view = new DataView(buffer);
-  // WAV header
-  const writeStr = (offset, str) => { for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i)); };
-  writeStr(0, 'RIFF');
-  view.setUint32(4, 36 + numSamples * 2, true);
-  writeStr(8, 'WAVE');
-  writeStr(12, 'fmt ');
-  view.setUint32(16, 16, true);
-  view.setUint16(20, 1, true); // PCM
-  view.setUint16(22, 1, true); // mono
-  view.setUint32(24, sampleRate, true);
-  view.setUint32(28, sampleRate * 2, true);
-  view.setUint16(32, 2, true);
-  view.setUint16(34, 16, true);
-  writeStr(36, 'data');
-  view.setUint32(40, numSamples * 2, true);
-  for (let i = 0; i < numSamples; i++) {
-    const s = Math.max(-1, Math.min(1, samples[i]));
-    view.setInt16(44 + i * 2, s * 32767, true);
-  }
-  return new Blob([buffer], { type: 'audio/wav' });
+function samplesToWav(samples, sr) {
+  const n = samples.length, ab = new ArrayBuffer(44 + n * 2), v = new DataView(ab);
+  const w = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  w(0,'RIFF'); v.setUint32(4,36+n*2,true); w(8,'WAVE'); w(12,'fmt ');
+  v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
+  v.setUint32(24,sr,true); v.setUint32(28,sr*2,true); v.setUint16(32,2,true);
+  v.setUint16(34,16,true); w(36,'data'); v.setUint32(40,n*2,true);
+  for (let i = 0; i < n; i++) v.setInt16(44+i*2, Math.max(-1,Math.min(1,samples[i]))*32767, true);
+  return new Blob([ab], { type: 'audio/wav' });
 }
 
-// Decode any audio blob to AudioBuffer
 async function decodeAudioBlob(blob) {
   const ctx = new (window.AudioContext || window.webkitAudioContext)();
-  const arrayBuf = await blob.arrayBuffer();
-  const audioBuf = await ctx.decodeAudioData(arrayBuf);
-  ctx.close();
-  return audioBuf;
+  const buf = await ctx.decodeAudioData(await blob.arrayBuffer());
+  ctx.close(); return buf;
 }
 
-// Stitch: intro chime + 0.4s silence + speech + 0.5s silence + outro chime → single WAV
 async function stitchWithChimes(speechBlob) {
-  const sampleRate = 44100;
-  const introSamples = generateChime('intro');
-  const outroSamples = generateChime('outro');
-
-  // Decode speech MP3 to raw samples
-  const speechBuf = await decodeAudioBlob(speechBlob);
-  const speechSamples = new Float32Array(speechBuf.length);
-  speechBuf.copyFromChannel(speechSamples, 0);
-
-  // Resample speech if needed
-  const speechRate = speechBuf.sampleRate;
-  let finalSpeech = speechSamples;
-  if (speechRate !== sampleRate) {
-    const ratio = speechRate / sampleRate;
-    const newLen = Math.floor(speechSamples.length / ratio);
-    finalSpeech = new Float32Array(newLen);
-    for (let i = 0; i < newLen; i++) {
-      const srcIdx = Math.floor(i * ratio);
-      finalSpeech[i] = speechSamples[Math.min(srcIdx, speechSamples.length - 1)];
-    }
+  const sr = 44100;
+  const intro = generateChime('intro'), outro = generateChime('outro');
+  const sBuf = await decodeAudioBlob(speechBlob);
+  const sSamples = new Float32Array(sBuf.length);
+  sBuf.copyFromChannel(sSamples, 0);
+  let speech = sSamples;
+  if (sBuf.sampleRate !== sr) {
+    const r = sBuf.sampleRate / sr, len = Math.floor(sSamples.length / r);
+    speech = new Float32Array(len);
+    for (let i = 0; i < len; i++) speech[i] = sSamples[Math.min(Math.floor(i * r), sSamples.length - 1)];
   }
-
-  const silenceGap1 = Math.floor(0.4 * sampleRate); // after intro
-  const silenceGap2 = Math.floor(0.5 * sampleRate); // after speech
-  const totalLen = introSamples.length + silenceGap1 + finalSpeech.length + silenceGap2 + outroSamples.length;
-  const combined = new Float32Array(totalLen);
-
-  let offset = 0;
-  combined.set(introSamples, offset); offset += introSamples.length;
-  offset += silenceGap1; // silence (already zeros)
-  combined.set(finalSpeech, offset); offset += finalSpeech.length;
-  offset += silenceGap2; // silence
-  combined.set(outroSamples, offset);
-
-  return samplesToWav(combined, sampleRate);
+  const g1 = Math.floor(0.4*sr), g2 = Math.floor(0.5*sr);
+  const combined = new Float32Array(intro.length + g1 + speech.length + g2 + outro.length);
+  let off = 0;
+  combined.set(intro, off); off += intro.length + g1;
+  combined.set(speech, off); off += speech.length + g2;
+  combined.set(outro, off);
+  return samplesToWav(combined, sr);
 }
 
 // --- Generate ---
 async function generateAll() {
   if (!apiKey) { alert('Please save your Google Cloud TTS API key first.'); return; }
-  if (rows.length === 0) return;
-
+  if (!rows.length) return;
   document.getElementById('btnGenerate').disabled = true;
   document.getElementById('progressCard').classList.add('visible');
   document.getElementById('resultsCard').classList.remove('visible');
@@ -595,65 +620,46 @@ async function generateAll() {
 
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
-    const pct = ((i + 1) / rows.length * 100).toFixed(0);
-    document.getElementById('progressBar').style.width = pct + '%';
-    document.getElementById('progressText').textContent = `${i + 1} / ${rows.length}`;
+    document.getElementById('progressBar').style.width = ((i+1)/rows.length*100)+'%';
+    document.getElementById('progressText').textContent = `${i+1} / ${rows.length}`;
     document.getElementById('progressCurrent').textContent = `Generating: ${row.name}`;
-
     try {
-      // 1. Get speech from Google TTS
-      const resp = await fetch(
-        `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            input: { text: row.text },
-            voice: { languageCode: VOICES[selectedVoice].lang, name: VOICES[selectedVoice].name, ssmlGender: VOICES[selectedVoice].gender },
-            audioConfig: {
-              audioEncoding: 'MP3',
-              speakingRate: 0.95,
-              volumeGainDb: 2.0,
-              effectsProfileId: ['large-home-entertainment-class-device'],
-            },
-          }),
-        }
-      );
+      const resp = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          input: { text: row.text },
+          voice: { languageCode: VOICES[selectedVoice].lang, name: VOICES[selectedVoice].name, ssmlGender: VOICES[selectedVoice].gender },
+          audioConfig: { audioEncoding: 'MP3', speakingRate: 0.95, volumeGainDb: 2.0, effectsProfileId: ['large-home-entertainment-class-device'] },
+        }),
+      });
       if (!resp.ok) {
         let msg = 'API error';
-        try { const err = await resp.json(); msg = (err.error?.message || msg).substring(0, 200); } catch(e) {}
+        try { const e = await resp.json(); msg = (e.error?.message||msg).substring(0,200); } catch(e) {}
         results.push({ name: row.name, blob: null, error: msg });
       } else {
         const data = await resp.json();
-        const raw = atob(data.audioContent);
-        const bytes = new Uint8Array(raw.length);
+        const raw = atob(data.audioContent), bytes = new Uint8Array(raw.length);
         for (let j = 0; j < raw.length; j++) bytes[j] = raw.charCodeAt(j);
-        const speechBlob = new Blob([bytes], { type: 'audio/mpeg' });
-
-        // 2. Stitch: intro chime + speech + outro chime
-        document.getElementById('progressCurrent').textContent = `Adding chimes: ${row.name}`;
-        const finalBlob = await stitchWithChimes(speechBlob);
-        results.push({ name: row.name, blob: finalBlob, error: null });
+        document.getElementById('progressCurrent').textContent = `Adding tones: ${row.name}`;
+        const blob = await stitchWithChimes(new Blob([bytes], { type: 'audio/mpeg' }));
+        results.push({ name: row.name, blob, error: null });
       }
-    } catch (e) {
-      results.push({ name: row.name, blob: null, error: e.message });
-    }
+    } catch (e) { results.push({ name: row.name, blob: null, error: e.message }); }
     if (i < rows.length - 1) await new Promise(r => setTimeout(r, 200));
   }
-
   document.getElementById('progressCurrent').textContent = 'All done!';
   document.getElementById('btnGenerate').disabled = false;
   showResults();
 }
 
-// --- Results ---
 function showResults() {
   const list = document.getElementById('resultsList');
   list.innerHTML = '';
   document.getElementById('resultsCard').classList.add('visible');
-
-  const successCount = results.filter(r => !r.error).length;
-  const failCount = results.filter(r => r.error).length;
+  const ok = results.filter(r => !r.error).length, fail = results.filter(r => r.error).length;
+  const summary = document.getElementById('resultsSummary');
+  summary.innerHTML = `<div class="summary-badge success">&#10003; ${ok} generated</div>` +
+    (fail ? `<div class="summary-badge fail">&#10007; ${fail} failed</div>` : '');
 
   results.forEach(r => {
     const div = document.createElement('div');
@@ -662,18 +668,10 @@ function showResults() {
       div.innerHTML = `<span class="result-icon">&#10060;</span><span class="result-name">${esc(r.name)}</span><span class="result-status error">${esc(r.error)}</span>`;
     } else {
       div.innerHTML = `<span class="result-icon">&#127925;</span><span class="result-name">${esc(r.name)}.wav</span><span class="result-status done">Ready</span>`;
-      // Play button
-      const playBtn = document.createElement('button');
-      playBtn.className = 'btn-play-sm';
-      playBtn.innerHTML = '&#9654; Play';
-      playBtn.onclick = () => playPreview(r.blob, playBtn);
-      div.appendChild(playBtn);
-      // Download button
-      const dlBtn = document.createElement('button');
-      dlBtn.className = 'btn-dl';
-      dlBtn.innerHTML = '&#8595; Save';
-      dlBtn.onclick = () => downloadFile(r.name, r.blob);
-      div.appendChild(dlBtn);
+      const pb = document.createElement('button'); pb.className = 'btn-play-sm';
+      pb.innerHTML = '&#9654; Play'; pb.onclick = () => playPreview(r.blob, pb); div.appendChild(pb);
+      const db = document.createElement('button'); db.className = 'btn-dl';
+      db.innerHTML = '&#8595; Save'; db.onclick = () => downloadFile(r.name, r.blob); div.appendChild(db);
     }
     list.appendChild(div);
   });
@@ -682,7 +680,7 @@ function showResults() {
 let currentPlayingUrl = null;
 function playPreview(blob, btn) {
   if (currentPlayingAudio) { currentPlayingAudio.pause(); currentPlayingAudio = null; }
-  if (currentPlayingUrl) { URL.revokeObjectURL(currentPlayingUrl); }
+  if (currentPlayingUrl) URL.revokeObjectURL(currentPlayingUrl);
   currentPlayingUrl = URL.createObjectURL(blob);
   currentPlayingAudio = new Audio(currentPlayingUrl);
   btn.innerHTML = '&#9632; Stop';
@@ -698,16 +696,11 @@ function playPreview(blob, btn) {
 
 function downloadFile(name, blob) {
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = sanitize(name) + '.wav';
-  a.click();
+  const a = document.createElement('a'); a.href = url; a.download = sanitize(name) + '.wav'; a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-function downloadAll() {
-  results.forEach(r => { if (r.blob) downloadFile(r.name, r.blob); });
-}
+function downloadAll() { results.forEach(r => { if (r.blob) downloadFile(r.name, r.blob); }); }
 
 function sanitize(n) {
   const reserved = /^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$/i;
