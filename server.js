@@ -60,7 +60,7 @@ app.post('/api/tts/:voiceId', async (req, res) => {
 
   const payload = {
     text,
-    model_id: model_id || 'eleven_multilingual_v2',
+    model_id: 'eleven_multilingual_v2',
     voice_settings: {
       stability: Number(voice_settings?.stability) || 0.5,
       similarity_boost: Number(voice_settings?.similarity_boost) || 0.75,
