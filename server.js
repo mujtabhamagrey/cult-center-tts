@@ -7,7 +7,7 @@ const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
 
 // Allowed voice IDs — whitelist to prevent SSRF via voiceId param
 const ALLOWED_VOICE_IDS = new Set([
-  '0ZOhGcBopt9S6GBK8tnj', // Ayesha (female)
+  '00p7Mr8UUZabtl7W4XeM', // Riya (female)
   'siw1N9V8LmYeEWKyWBxv', // Ruhaan (male)
 ]);
 
