@@ -1,9 +1,36 @@
 const express = require('express');
 const path = require('path');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
+
+// Security headers
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://www.gstatic.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      connectSrc: ["'self'", "https://*.googleapis.com", "https://*.firebaseapp.com"],
+      imgSrc: ["'self'", "https://www.gstatic.com", "https://*.googleusercontent.com", "data:"],
+      frameSrc: ["https://*.firebaseapp.com", "https://*.googleapis.com"],
+    },
+  },
+}));
+
+// Rate limit TTS endpoint — 10 requests per minute per IP
+const ttsLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests — please wait a minute before generating more audio.' },
+});
+app.use('/api/tts', ttsLimiter);
 
 // Allowed voice IDs — whitelist to prevent SSRF via voiceId param
 const ALLOWED_VOICE_IDS = new Set([
@@ -13,7 +40,6 @@ const ALLOWED_VOICE_IDS = new Set([
 
 const ALLOWED_ORIGINS = [
   'https://cult-tts-proxy-production.up.railway.app',
-  'http://localhost:3000',
 ];
 
 app.use(express.json({ limit: '1mb' }));
@@ -80,8 +106,7 @@ app.post('/api/tts/:voiceId', async (req, res) => {
     });
 
     if (!response.ok) {
-      const text = await response.text();
-      return res.status(response.status).send(text);
+      return res.status(response.status).json({ error: 'TTS generation failed' });
     }
 
     res.set('Content-Type', 'audio/mpeg');
